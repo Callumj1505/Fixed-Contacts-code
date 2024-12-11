@@ -17,12 +17,18 @@ class ContactBook:
         ]
         
     # Add a new contact to the contact book.
-    def add_contact(self, name, phone_number, email):
-        new_contact = Contact(name, phone_number, email)
-        # Create a new Contact object with the provided details
-        self.contacts.append(new_contact)
-        print(Fore.GREEN + f"Contact '{name}' added successfully."+ Style.RESET_ALL)
-        
+    def add_contact(self):
+        name = input("Enter name: ").lower()
+        phone_number = input("Enter phone number: ")
+        email = input("Enter email: ")
+        if any(contact.phone_number == phone_number or contact.email == email for contact in self.contacts):
+            print(Fore.RED + "This contact already exists. Please try again." + Style.RESET_ALL)
+        else:
+            # Add new contact to the list
+            new_contact = Contact(name, phone_number, email)  # Create a new contact
+            self.contacts.append(new_contact)  # Append to the contacts list
+            print(Fore.GREEN + f"Contact '{name}' added successfully." + Style.RESET_ALL)
+
     # Display all contacts in the contact book.
     def display_all_contacts(self):
         for contact in self.contacts:
@@ -47,7 +53,7 @@ class ContactBook:
     # Update an existing contact's details.
     def updateContacts(self):
         for contact in self.contacts:
-            print(f"{contact.name}, Phone: {contact.phone_number}, Email: {contact.email}")
+            print(Fore.CYAN + f"{contact.name}, Phone: {contact.phone_number}, Email: {contact.email}"+ Style.RESET_ALL)
         print (" Choose a name from your contacts to delete")
         user = input("choose Name > ").lower() #ask user to choose contact
         for contact in self.contacts: # loop through all contacts
@@ -62,14 +68,14 @@ class ContactBook:
                 new_phone_number = input("Choose Number > ").lower() #choosing new number
                 new_email = input("Choose Email > ").lower() #choosing new email
                 new_contact = Contact(new_name, new_phone_number, new_email) #create new contatc with updtaed details
-                if new_phone_number or new_email in Contact: #this is to check duplicates
-                    print (Fore.RED + "This contact already exsists. Please try again."+ Style.RESET_ALL)
-                    new_name = input("Choose Name > ").lower() #if name exsists enter other details
-                    new_phone_number = input("Choose Number > ").lower()
-                    new_email = input("Choose Email > ").lower()
+                if any(contact.phone_number == new_phone_number or contact.email == new_email for contact in self.contacts): # checking to see if already exsists
+                    print(Fore.RED + "This contact already exists. Please try again." + Style.RESET_ALL)
+                    break
                 else:
-                    self.contacts.append(new_contact) #else if it isnt a dupe then append new details
-                    print(Fore.GREEN + "Contact has been added.")
+                    new_contact = Contact(new_name, new_phone_number, new_email)  # Create a new contact
+                    self.contacts.append(new_contact)  
+                    print(Fore.GREEN + f"Contact was added successfully." + Style.RESET_ALL)
+                    break
             elif user_delete == "no": #if user chooses no 
                 print (Fore.CYAN + "Please choose a contact to delete."+ Style.RESET_ALL)
                 user = input("choose Name > ") #asking to choose another contact
@@ -91,7 +97,6 @@ class ContactBook:
 # Main function to interact with ContactBook.
 def main():
     contact_book = ContactBook()
-    
     # Display the menu options to the user
     while True:
         print("\n--- Contact Book Menu ---")
@@ -105,18 +110,8 @@ def main():
 
         choice = input("Enter your choice: ")
         #loop for actions in add contact func if 1 selected
-        if choice == "1":
-            name = input("Enter name: ").lower() #asking for new name, phone number and email.
-            phone_number = input("Enter phone number: ")
-            email = input("Enter email: ")
-            if phone_number or email in Contact:
-                print (Fore.RED + "This contact already exsists. Please try again."+ Style.RESET_ALL)#if contact already exsists try again
-                name = input("Enter name: ").lower()
-                phone_number = input("Enter phone number: ")
-                email = input("Enter email: ")
-            else:
-                print(Fore.GREEN + "New contact has been created"+ Style.RESET_ALL) #if successful print this
-                contact_book.add_contact(name, phone_number, email)
+        if choice == "1":  # Inside main() method
+            contact_book.add_contact()
         elif choice == "2":
             contact_book.SearchContacts() #runs the search contact func if 2 selected
         elif choice == "3":
